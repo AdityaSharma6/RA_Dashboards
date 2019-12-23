@@ -7,7 +7,7 @@ import random
 import plotly.graph_objs as go
 import json
 import os
-PATH = os.getcwd()
+
 Graph1 = "country_by_revenue.json"
 Graph2 = "product_type_by_revenue.json"
 Graph3 = "product_type_by_channel_and_profit.json"
@@ -17,6 +17,7 @@ Graph6 = "product_type_by_channel_and_cost.json"
 Graph7 = "social_media_comments.json"
 Graph8 = "social_media_comments_by_product_line.json"
 countries = "countries.json"
+
 with open(countries, "r") as file:
     countries_data = json.load(file)
 with open (Graph1, "r") as file:
@@ -48,28 +49,28 @@ app.layout = html.Div([
     html.Div([
         html.Div([
         dcc.Graph(id='Graph1'),
-        dcc.Interval(id="Update_Graph1", interval=1000)
+        dcc.Interval(id="Update_Graph1", interval=20000)
         ]), #, style={'float': 'left', 'width': '40%'})
         html.Div([
             dcc.Graph(id="Graph2"),
-            dcc.Interval(id="Update_Graph2", interval=5000)
+            dcc.Interval(id="Update_Graph2", interval=10000)
         ]) #, style={'float': 'right', 'width': '40%'})
     ]),
     html.Div([
         dcc.Graph(id="Graph3"),
-        dcc.Interval(id="Update_Graph3", interval=5000)
+        dcc.Interval(id="Update_Graph3", interval=10000)
     ]),
     html.Div([
         dcc.Graph(id="Graph4"),
-        dcc.Interval(id="Update_Graph4", interval=50000)
+        dcc.Interval(id="Update_Graph4", interval=10000)
     ]),
     html.Div([
         dcc.Graph(id="Graph5"),
-        dcc.Interval(id="Update_Graph5", interval=5000)
+        dcc.Interval(id="Update_Graph5", interval=10000)
     ]),
     html.Div([
         dcc.Graph(id="Graph6"),
-        dcc.Interval(id="Update_Graph6", interval=5000)
+        dcc.Interval(id="Update_Graph6", interval=10000)
     ])
 
 ])
