@@ -1,5 +1,6 @@
 import dash
 from dash.dependencies import Output, Input
+from dash.exceptions import PreventUpdate
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly
@@ -17,6 +18,7 @@ Graph6 = "product_type_by_channel_and_cost.json"
 Graph7 = "social_media_comments.json"
 Graph8 = "social_media_comments_by_product_line.json"
 countries = "countries.json"
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 with open(countries, "r") as file:
     countries_data = json.load(file)
@@ -37,32 +39,28 @@ with open (Graph7, "r") as file:
 with open (Graph8, "r") as file:
     Graph8_Data = json.load(file)
 
-app = dash.Dash(__name__)
+app = dash.Dash(__name__,external_stylesheets=external_stylesheets)
 server = app.server
 app.title = "Big Data Dashboard"
-header_text = '''
-Welcome to Big Data Dashboard!
-Below, you will be presented with a series of Graphs. Use these graphs along with your amazing Data Analyst skills to reach a decisive conclusion.
-Best of Luck!
-'''
+
 app.layout = html.Div([
+    html.Div(className="row", children=[
+        html.Div([
+            dcc.Graph(id='Graph1'),
+            dcc.Interval(id="Update_Graph1", interval=200000)
+        ],className="five columns"),
+        html.Div([
+            dcc.Graph(id="Graph4"),
+            dcc.Interval(id="Update_Graph4", interval=200000)
+        ],className="five columns")
+    ]), #, style={'float': 'left', 'width': '40%'})
     html.Div([
-        html.Div([
-        dcc.Graph(id='Graph1'),
-        dcc.Interval(id="Update_Graph1", interval=20000)
-        ]), #, style={'float': 'left', 'width': '40%'})
-        html.Div([
             dcc.Graph(id="Graph2"),
-            dcc.Interval(id="Update_Graph2", interval=10000)
-        ]) #, style={'float': 'right', 'width': '40%'})
-    ]),
+            dcc.Interval(id="Update_Graph2", interval=100000)
+        ]), #, style={'float': 'right', 'width': '40%'})
     html.Div([
         dcc.Graph(id="Graph3"),
         dcc.Interval(id="Update_Graph3", interval=10000)
-    ]),
-    html.Div([
-        dcc.Graph(id="Graph4"),
-        dcc.Interval(id="Update_Graph4", interval=10000)
     ]),
     html.Div([
         dcc.Graph(id="Graph5"),
@@ -71,30 +69,36 @@ app.layout = html.Div([
     html.Div([
         dcc.Graph(id="Graph6"),
         dcc.Interval(id="Update_Graph6", interval=10000)
-    ])
-
+    ]),
+    html.Div(children=[
+        html.Pre(id='click-data')
+        ])
 ])
 
 @app.callback(Output('Graph1', 'figure'),
             [Input('Update_Graph1', 'n_intervals')])
 def update_graph1(input_data):
-    '''data = {
-        "type": "scattergeo",
-        "lat": Graph1_Data.get("Latitude"),
-        "lon": Graph1_Data.get("Longitude"),
-        "text": Graph1_Data.get("Revenue Values"),
-        "marker": {
-            "color": 25.0,
-            "size": "pop",
-            "opacity": 1
-        } 
-    }'''
-
     data = go.Scattergeo(
+        name="Revenue",
+        showlegend=True,
+        mode="markers",
         lat= Graph1_Data.get("Latitude"),
         lon= Graph1_Data.get("Longitude"),
         text= Graph1_Data.get("Revenue Values"),
-        hovertemplate= 'Revenue: $%{text: .0f}'
+        hovertext= Graph1_Data.get("Countries"),
+        hovertemplate= 'Revenue: $%{text: .0f}<br>Country: %{hovertext}',
+        marker= dict(
+            opacity=1,
+            size=Graph1_Data.get("Revenue Values"),
+            sizeref=1000,
+            sizemin=1,
+            sizemode="area",
+            gradient = dict (
+                type="radial",
+                color="red"
+            ),
+            color = "blue"
+        )
     )
     
     layout = {
@@ -107,10 +111,20 @@ def update_graph1(input_data):
         }, 
         "title": "Country Revenue",
         "hovermode": "closest",
-        "margin": {'l': 30, 'r': 10, 'b': 10, 't': 49}
+        #"margin": {'l': 30, 'r': 30, 'b': 10, 't': 49},
+        "clickmode": "event+select"
     }
     return {"data": [data], "layout": layout} 
 
+@app.callback(Output("click-data", "children"),
+            [Input("Graph1", "clickData")])
+def display_click_data(clickData):
+    counter = 0
+    if clickData == None:
+        raise PreventUpdate
+    else:
+        counter += 1
+        return counter
 
 @app.callback(Output('Graph2', 'figure'),
             [Input('Update_Graph2', 'n_intervals')])
@@ -180,10 +194,26 @@ def update_graph3(input_data):
 def update_graph4(input_data):
 
     data = go.Scattergeo(
+        name="Product Cost",
+        showlegend=True,
+        mode="markers",
         lat= Graph4_Data.get("Latitude"),
         lon= Graph4_Data.get("Longitude"),
         text= Graph4_Data.get("Product Cost Values"),
-        hovertemplate= 'Product Cost: $%{text: .0f}'
+        hovertext= Graph4_Data.get("Countries"),
+        hovertemplate= "Product Cost: $%{text: .0f}<br>Country: %{hovertext}",
+        marker= dict(
+            opacity=1,
+            size=Graph4_Data.get("Product Cost Values"),
+            sizeref=1000,
+            sizemin=1,
+            sizemode="area",
+            gradient = dict (
+                type="radial",
+                color="red"
+            ),
+            color = "blue"
+        )
     )
     
     layout = {
@@ -196,7 +226,8 @@ def update_graph4(input_data):
         }, 
         "title": "Country Product Cost",
         "hovermode": "closest",
-        "margin": {'l': 30, 'r': 10, 'b': 10, 't': 49}
+       # "margin": {'l': 30, 'r': 10, 'b': 10, 't': 49}
+       "clickmode": "event+select"
     }
     return {"data": [data], "layout": layout} 
     
