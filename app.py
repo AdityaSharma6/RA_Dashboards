@@ -421,9 +421,8 @@ def secret_key(n_clicks):
     if n_clicks == None:
         raise PreventUpdate
     else:
-        number = generate_number(click_counter)
-        return (f"{number}")
-
+        return "Scroll down to retrieve your token. Input the token into your Dashboard Account."
+'''
 def generate_number(click_counter):
     if click_counter == []:
         return 789
@@ -434,7 +433,7 @@ def generate_number(click_counter):
         number = number * 10
         number += value
     return number
-
+'''
 
 if __name__ == "__main__":
     app.run_server(debug=True)
