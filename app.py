@@ -48,48 +48,61 @@ app.layout = html.Div([
         html.Div([
             dcc.Graph(id='Graph1'),
             dcc.Interval(id="Update_Graph1", interval=200000)
-        ],className="five columns"),
+        ],className="four columns"),
         html.Div([
             dcc.Graph(id="Graph4"),
             dcc.Interval(id="Update_Graph4", interval=200000)
-        ],className="five columns")
-    ]), #, style={'float': 'left', 'width': '40%'})
-    html.Div([
+        ],className="four columns"),
+        html.Div([
             dcc.Graph(id="Graph2"),
             dcc.Interval(id="Update_Graph2", interval=100000)
-        ]), #, style={'float': 'right', 'width': '40%'})
-    html.Div([
-        dcc.Graph(id="Graph3"),
-        dcc.Interval(id="Update_Graph3", interval=10000)
+        ],className= "four columns") #, style={'float': 'right', 'width': '40%'})
+    ]), #, style={'float': 'left', 'width': '40%'})
+
+
+    html.Div(className="row", children=[
+        html.Div([
+            dcc.Graph(id="Graph3"),
+            dcc.Interval(id="Update_Graph3", interval=10000)
+        ],className="six columns"),
+        html.Div([
+            dcc.Graph(id="Graph6"),
+            dcc.Interval(id="Update_Graph6", interval=10000)
+        ],className= "six columns")
     ]),
-    html.Div([
-        dcc.Graph(id="Graph5"),
-        dcc.Interval(id="Update_Graph5", interval=10000)
-    ]),
-    html.Div([
-        dcc.Graph(id="Graph6"),
-        dcc.Interval(id="Update_Graph6", interval=10000)
+
+
+    html.Div(className="row", children=[
+        html.Div([
+            dcc.Graph(id="Graph5"),
+            dcc.Interval(id="Update_Graph5", interval=10000)
+        ], className= "six columns")
     ]),
     html.Div(children=[
         html.Pre(id='click-data')
         ])
 ])
 
-@app.callback(Output('Graph1', 'figure'),
-            [Input('Update_Graph1', 'n_intervals')])
+@app.callback(Output('Graph1', 'figure'), [Input('Update_Graph1', 'n_intervals')])
 def update_graph1(input_data):
+    revenue_values = Graph1_Data.get("Revenue Values")
+
+    for i in range(len(revenue_values)):
+        random_num = random.uniform(0.8, 1.2)
+        revenue_values[i] = random_num * revenue_values[i]
+
     data = go.Scattergeo(
         name="Revenue",
         showlegend=True,
         mode="markers",
         lat= Graph1_Data.get("Latitude"),
         lon= Graph1_Data.get("Longitude"),
-        text= Graph1_Data.get("Revenue Values"),
+        text= revenue_values,
         hovertext= Graph1_Data.get("Countries"),
         hovertemplate= 'Revenue: $%{text: .0f}<br>Country: %{hovertext}',
         marker= dict(
             opacity=1,
-            size=Graph1_Data.get("Revenue Values"),
+            size= revenue_values,
             sizeref=1000,
             sizemin=1,
             sizemode="area",
@@ -116,18 +129,9 @@ def update_graph1(input_data):
     }
     return {"data": [data], "layout": layout} 
 
-@app.callback(Output("click-data", "children"),
-            [Input("Graph1", "clickData")])
-def display_click_data(clickData):
-    counter = 0
-    if clickData == None:
-        raise PreventUpdate
-    else:
-        counter += 1
-        return counter
 
-@app.callback(Output('Graph2', 'figure'),
-            [Input('Update_Graph2', 'n_intervals')])
+
+@app.callback(Output('Graph2', 'figure'), [Input('Update_Graph2', 'n_intervals')])
 def update_graph2(input_data):
     x_values = list(Graph2_Data.keys())
     y_values = list(Graph2_Data.values())
@@ -149,8 +153,8 @@ def update_graph2(input_data):
     return {"data": [data], "layout": layout}
 
 
-@app.callback(Output("Graph3", "figure"),
-            [Input("Update_Graph3", "n_intervals")])
+
+@app.callback(Output("Graph3", "figure"), [Input("Update_Graph3", "n_intervals")])
 def update_graph3(input_data):
     x_values = list(Graph3_Data.get("Retail").keys())
     direct_marketing = list(Graph3_Data.get("Direct Marketing").values())
@@ -168,7 +172,8 @@ def update_graph3(input_data):
     data_dm = go.Bar(
         x = x_values,
         y = direct_marketing,
-        name="Direct Marketing"
+        name="Direct Marketing",
+
     )
     data_em = go.Bar(
         x= x_values,
@@ -182,15 +187,16 @@ def update_graph3(input_data):
     )
 
     layout = {
-        "height": 800,
-        "width": 1000
+        "title": "Product Type by Channel and Profit",
+        "barmode": "group",
+        "bargap": 0.5
     }
 
     return {"data": [data_dm, data_rt, data_em], "layout": layout}
 
 
-@app.callback(Output('Graph4', 'figure'),
-            [Input('Update_Graph4', 'n_intervals')])
+
+@app.callback(Output('Graph4', 'figure'), [Input('Update_Graph4', 'n_intervals')])
 def update_graph4(input_data):
 
     data = go.Scattergeo(
@@ -231,9 +237,9 @@ def update_graph4(input_data):
     }
     return {"data": [data], "layout": layout} 
     
+
     
-@app.callback(Output("Graph5", "figure"),
-            [Input("Update_Graph5", "n_intervals")])
+@app.callback(Output("Graph5", "figure"), [Input("Update_Graph5", "n_intervals")])
 def update_graph5(input_data):
 
     x_values = list(Graph5_Data.keys())
@@ -253,8 +259,8 @@ def update_graph5(input_data):
     return {"data": [data]}
 
 
-@app.callback(Output("Graph6", "figure"),
-            [Input("Update_Graph6", "n_intervals")])
+
+@app.callback(Output("Graph6", "figure"), [Input("Update_Graph6", "n_intervals")])
 def update_graph6(input_data):
     x_values = list(Graph6_Data.get("Direct Marketing").keys())
     direct_marketing = list(Graph6_Data.get("Direct Marketing").values())
@@ -287,14 +293,26 @@ def update_graph6(input_data):
         name= "Retail",
         orientation= "h"
     )
+
     layout = {
-        "height": 800,
-        "width": 1000
+        "title": "Product Type by Channel and Product Cost",
+        "barmode": "group",
+        "bargap": 0.5,
+        "xaxis_title": "Product Per Channel",
+        "yaxis_title": "Cost in USD"
     }
 
     return {"data": [data_dm, data_rt, data_em], "layout": layout}
 
 
+@app.callback(Output("click-data", "children"),
+            [Input("Graph1", "clickData")])
+def display_click_data(clickData):
+    if clickData == None:
+        raise PreventUpdate
+    else:
+        counter += 1
+        return counter
 
 if __name__ == "__main__":
     app.run_server(debug=True)
