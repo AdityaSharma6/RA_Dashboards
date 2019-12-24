@@ -311,8 +311,7 @@ def display_click_data(clickData):
     if clickData == None:
         raise PreventUpdate
     else:
-        counter += 1
-        return counter
+        return "PASS"
 
 if __name__ == "__main__":
     app.run_server(debug=True)
