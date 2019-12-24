@@ -409,7 +409,6 @@ def secret_key(n_clicks):
         raise PreventUpdate
     else:
         number = generate_number(click_counter)
-        click_counter = []
         return (f"{number}")
 
 def generate_number(click_counter):
@@ -421,6 +420,7 @@ def generate_number(click_counter):
         value = click_counter[i]
         number = number * 10
         number += value
+    click_counter = []
     return number
 
 
