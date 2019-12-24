@@ -84,14 +84,26 @@ app.layout = html.Div([
         #    dcc.Interval(id="Update_Graph8", interval=16000)
         #], className= "six columns")
     ]),
-    html.Div(children=[
-        html.Pre(id='click-data1'),
-        html.Pre(id="click-data2"),
-        html.Pre(id="click-data3"),
-        html.Pre(id="click-data4"),
-        html.Pre(id="click-data5"),
-        html.Pre(id="click-data6")
-        ])
+    html.Div(className = "row", children=[
+        html.Div([
+            html.Pre(id='click-data1')
+        ],className= "one columns"),
+        html.Div([
+            html.Pre(id="click-data2")
+        ],className= "one columns"),
+        html.Div([
+            html.Pre(id="click-data3")
+        ],className= "one columns"),
+        html.Div([
+            html.Pre(id="click-data4")
+        ],className= "one columns"),
+        html.Div([
+            html.Pre(id="click-data5")
+        ],className= "one columns"),
+        html.Div([
+            html.Pre(id="click-data6")
+        ],className= "one columns")
+    ])
 ])
 
 @app.callback(Output('Graph1', 'figure'), [Input('Update_Graph1', 'n_intervals')])
@@ -352,56 +364,57 @@ def update_graph8(input_data):
 @app.callback(Output("click-data1", "children"),
             [Input("Graph1", "clickData")])
 def click1(clickData):
+    counter = 1
     if clickData == None:
         raise PreventUpdate
     else:
-        click_counter.append(1)
-        raise PreventUpdate
+        return counter
 
 @app.callback(Output("click-data2", "children"),
             [Input("Graph2", "clickData")])
 def click2(clickData):
+    counter = 2
     if clickData == None:
         raise PreventUpdate
     else:
-        click_counter.append(2)
-        raise PreventUpdate
+        return counter
+        
 
 @app.callback(Output("click-data3", "children"),
             [Input("Graph3", "clickData")])
 def click3(clickData):
+    counter = 3
     if clickData == None:
         raise PreventUpdate
     else:
-        click_counter.append(3)
-        raise PreventUpdate
+        return counter
 
 @app.callback(Output("click-data4", "children"),
             [Input("Graph4", "clickData")])
 def click4(clickData):
+    counter = 4
     if clickData == None:
         raise PreventUpdate
     else:
-        click_counter.append(4)
-        raise PreventUpdate
+        return counter
 
 @app.callback(Output("click-data5", "children"),
             [Input("Graph5", "clickData")])
 def click5(clickData):
+    counter = 5
     if clickData == None:
         raise PreventUpdate
     else:
-        click_counter.append(5)
-        raise PreventUpdate
+        return counter
 
 @app.callback(Output("click-data6", "children"),
             [Input("Graph6", "clickData")])
 def click6(clickData):
+    counter = 6
     if clickData == None:
         raise PreventUpdate
     else:
-        click_counter.append(6)
-        raise PreventUpdate
+        return counter
 
 @app.callback(Output("user_results", "children"), [Input("show-secret", "n_clicks")])
 def secret_key(n_clicks):
@@ -409,7 +422,6 @@ def secret_key(n_clicks):
         raise PreventUpdate
     else:
         number = generate_number(click_counter)
-        click_counter = []
         return (f"{number}")
 
 def generate_number(click_counter):
@@ -421,8 +433,6 @@ def generate_number(click_counter):
         value = click_counter[i]
         number = number * 10
         number += value
-
-    click_counter = []
     return number
 
 
