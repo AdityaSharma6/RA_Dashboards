@@ -42,7 +42,7 @@ with open (Graph8, "r") as file:
 app = dash.Dash(__name__,external_stylesheets=external_stylesheets)
 server = app.server
 app.title = "Big Data Dashboard"
-
+click_counter = []
 app.layout = html.Div([
     html.Div(className="row", children=[
         html.Div([
@@ -63,11 +63,11 @@ app.layout = html.Div([
     html.Div(className="row", children=[
         html.Div([
             dcc.Graph(id="Graph3"),
-            dcc.Interval(id="Update_Graph3", interval=10000)
+            dcc.Interval(id="Update_Graph3", interval=12000)
         ],className="six columns"),
         html.Div([
             dcc.Graph(id="Graph6"),
-            dcc.Interval(id="Update_Graph6", interval=10000)
+            dcc.Interval(id="Update_Graph6", interval=14000)
         ],className= "six columns")
     ]),
 
@@ -75,11 +75,22 @@ app.layout = html.Div([
     html.Div(className="row", children=[
         html.Div([
             dcc.Graph(id="Graph5"),
-            dcc.Interval(id="Update_Graph5", interval=10000)
-        ], className= "six columns")
+            dcc.Interval(id="Update_Graph5", interval=16000)
+        ], className= "six columns"),
+        html.Button("Click here to conclude your analysis & generate your survey token.", id="show-secret"),
+        html.Div(id="user_results")
+        #html.Div([
+        #    dcc.Graph(id="Graph8"),
+        #    dcc.Interval(id="Update_Graph8", interval=16000)
+        #], className= "six columns")
     ]),
     html.Div(children=[
-        html.Pre(id='click-data')
+        html.Pre(id='click-data1'),
+        html.Pre(id="click-data2"),
+        html.Pre(id="click-data3"),
+        html.Pre(id="click-data4"),
+        html.Pre(id="click-data5"),
+        html.Pre(id="click-data6")
         ])
 ])
 
@@ -122,7 +133,7 @@ def update_graph1(input_data):
             "showcountries": False, 
             "showcoastlines": True
         }, 
-        "title": "Country Revenue",
+        "title": "Sum of Revenue per Country (USD)",
         "hovermode": "closest",
         #"margin": {'l': 30, 'r': 30, 'b': 10, 't': 49},
         "clickmode": "event+select"
@@ -143,11 +154,13 @@ def update_graph2(input_data):
     data = go.Pie(
         labels = x_values,
         values = y_values,
-        hoverinfo = 'label+percent+value'
+        hoverinfo = 'label+percent+value',
+        #hovertemplate= 'Cost: $%{y_values}<br>Product Line: %{hovertext}'
     )
 
     layout = {
-        "title": "Product Line by Cost"
+        "title": "Sum of Revenue per Product Line (USD)",
+        "clickmode": "event+select"
     }
 
     return {"data": [data], "layout": layout}
@@ -187,9 +200,10 @@ def update_graph3(input_data):
     )
 
     layout = {
-        "title": "Product Type by Channel and Profit",
+        "title": "Sum of Profit per Product Line per Channel (USD)",
         "barmode": "group",
-        "bargap": 0.5
+        "bargap": 0.5,
+        "clickmode": "event+select"
     }
 
     return {"data": [data_dm, data_rt, data_em], "layout": layout}
@@ -230,7 +244,7 @@ def update_graph4(input_data):
             "showcountries": False, 
             "showcoastlines": True
         }, 
-        "title": "Country Product Cost",
+        "title": "Sum of Product Cost per Country (USD)",
         "hovermode": "closest",
        # "margin": {'l': 30, 'r': 10, 'b': 10, 't': 49}
        "clickmode": "event+select"
@@ -256,7 +270,12 @@ def update_graph5(input_data):
         orientation="h"
     )
 
-    return {"data": [data]}
+    layout = {
+        "title": "Sum of Product Cost per Product Line (USD)",
+        "clickmode": "event+select"
+    }
+
+    return {"data": [data], "layout": layout}
 
 
 
@@ -295,23 +314,114 @@ def update_graph6(input_data):
     )
 
     layout = {
-        "title": "Product Type by Channel and Product Cost",
+        "title": "Sum of Product Cost per Product Line per Channel (USD)",
         "barmode": "group",
         "bargap": 0.5,
         "xaxis_title": "Product Per Channel",
-        "yaxis_title": "Cost in USD"
+        "yaxis_title": "Cost in USD",
+        "clickmode": "event+select"
     }
 
     return {"data": [data_dm, data_rt, data_em], "layout": layout}
 
+'''
+@app.callback(Output("Graph8", "figure"), [Input("Update_Graph8", "n_intervals")])
+def update_graph8(input_data):
+    levels = ["Comments", "Product Line"]
+    parents = list(Graph8_Data.keys())
+    labels = list(Graph8_Data.get("Dresses").keys())
+    final_values = [] 
+    final_labels = []
+    for i in range(len(parents)):
+        final_labels.append(parents[i])
+        for j in range(len(labels)):
+            final_labels.append(labels[i])
+            final_values.extend(list(list(Graph8_Data.values())[i].values()))
 
-@app.callback(Output("click-data", "children"),
+    
+    data = go.Sunburst(
+        labels=["Nirmal", "Archana", "Aditya", "Poonam", "Noor", "Tulsi"],
+        parents=["Nirmal", "Archana"],
+        values=[52, 50, 19, 15, 13, 6],
+        branchvalues="total"
+    )
+
+    return {"data": [data]}
+'''
+
+@app.callback(Output("click-data1", "children"),
             [Input("Graph1", "clickData")])
-def display_click_data(clickData):
+def click1(clickData):
     if clickData == None:
         raise PreventUpdate
     else:
-        return "PASS"
+        click_counter.append(1)
+        raise PreventUpdate
+
+@app.callback(Output("click-data2", "children"),
+            [Input("Graph2", "clickData")])
+def click2(clickData):
+    if clickData == None:
+        raise PreventUpdate
+    else:
+        click_counter.append(2)
+        raise PreventUpdate
+
+@app.callback(Output("click-data3", "children"),
+            [Input("Graph3", "clickData")])
+def click3(clickData):
+    if clickData == None:
+        raise PreventUpdate
+    else:
+        click_counter.append(3)
+        raise PreventUpdate
+
+@app.callback(Output("click-data4", "children"),
+            [Input("Graph4", "clickData")])
+def click4(clickData):
+    if clickData == None:
+        raise PreventUpdate
+    else:
+        click_counter.append(4)
+        raise PreventUpdate
+
+@app.callback(Output("click-data5", "children"),
+            [Input("Graph5", "clickData")])
+def click5(clickData):
+    if clickData == None:
+        raise PreventUpdate
+    else:
+        click_counter.append(5)
+        raise PreventUpdate
+
+@app.callback(Output("click-data6", "children"),
+            [Input("Graph6", "clickData")])
+def click6(clickData):
+    if clickData == None:
+        raise PreventUpdate
+    else:
+        click_counter.append(6)
+        raise PreventUpdate
+
+@app.callback(Output("user_results", "children"), [Input("show-secret", "n_clicks")])
+def secret_key(n_clicks):
+    if n_clicks == None:
+        raise PreventUpdate
+    else:
+        number = generate_number(click_counter)
+        return (f"{number}")
+
+def generate_number(click_counter):
+    if click_counter == []:
+        return 789
+    click_counter = list(set(click_counter))
+    number = 0
+    for i in range(len(click_counter)):
+        value = click_counter[i]
+        number = number * 10
+        number += value
+    return number
+
 
 if __name__ == "__main__":
     app.run_server(debug=True)
