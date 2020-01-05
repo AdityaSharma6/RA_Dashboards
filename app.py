@@ -8,7 +8,6 @@ import random
 import plotly.graph_objs as go
 import json
 from Algorithms import dictionary_dimension_conversion
-import dash_dangerously_set_inner_html
 import os
 
 Graph1 = "country_by_revenue.json"
