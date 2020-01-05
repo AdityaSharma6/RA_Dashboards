@@ -8,6 +8,7 @@ import random
 import plotly.graph_objs as go
 import json
 from Algorithms import dictionary_dimension_conversion
+import dash_dangerously_set_inner_html
 import os
 
 Graph1 = "country_by_revenue.json"
@@ -46,6 +47,10 @@ app.title = "Big Data Dashboard"
 click_counter = []
 app.layout = html.Div([
     html.Div(className="row", children=[
+        html.Button("Click here to show the correct answer of your analysis.", id="show-forbidden"),
+        html.Div(id="user_answer")
+    ]),
+    html.Div(className="row", children=[
         html.Div([
             dcc.Graph(id='Graph1'),
             dcc.Interval(id="Update_Graph1", interval=200000)
@@ -83,8 +88,19 @@ app.layout = html.Div([
             dcc.Interval(id="Update_Graph7", interval=50000)
         ], className= "six columns"),
     ]),
-    html.Button("Click here to conclude your analysis & generate your survey token.", id="show-secret"),
-    html.Div(id="user_results"),
+    #html.Div(className="row", children=[
+    #    html.Div([
+    #        html.Img(src=app.get_asset_url("WordCloud4.png"), style={'height':'90%', 'width':'110%'})
+    #    ], className="six columns"),
+    #    html.Div([
+    #        html.Img(src=app.get_asset_url("WordCloud5.png"), style={'height':'90%', 'width':'80%'})
+    #    ], className="six columns")   
+    #]),
+    html.Div(className="row", children=[
+        html.Button("Click here to conclude your analysis & generate your survey token.", id="show-secret"),
+        html.Div(id="user_results")
+        
+    ]),
     html.Div(className = "row", children=[
         html.Div([
             html.Pre(id='click-data1')
@@ -103,6 +119,9 @@ app.layout = html.Div([
         ],className= "one columns"),
         html.Div([
             html.Pre(id="click-data6")
+        ],className= "one columns"),
+        html.Div([
+            html.Pre(id="click-data7")
         ],className= "one columns")
     ])
 ])
@@ -377,10 +396,103 @@ def update_graph7(input_data):
     
     layout = {
         "title": "Popular Sentiments of each Product Line",
-        "margin": {"l": 20, "t":30, "b":20, "r":20}
+        "margin": {"l": 20, "t":30, "b":20, "r":20},
+        "clickmode": "event+select"
     }
 
     return {"data": [data], "layout": layout}
+
+@app.callback(Output("click-data1", "children"),
+            [Input("Graph1", "clickData")])
+def click1(clickData):
+    counter = 1
+    if clickData == None:
+        raise PreventUpdate
+    else:
+        return counter
+
+@app.callback(Output("click-data2", "children"),
+            [Input("Graph2", "clickData")])
+def click2(clickData):
+    counter = 2
+    if clickData == None:
+        raise PreventUpdate
+    else:
+        return counter
+
+@app.callback(Output("click-data3", "children"),
+            [Input("Graph3", "clickData")])
+def click3(clickData):
+    counter = 3
+    if clickData == None:
+        raise PreventUpdate
+    else:
+        return counter
+
+@app.callback(Output("click-data4", "children"),
+            [Input("Graph4", "clickData")])
+def click4(clickData):
+    counter = 4
+    if clickData == None:
+        raise PreventUpdate
+    else:
+        return counter
+
+@app.callback(Output("click-data5", "children"),
+            [Input("Graph5", "clickData")])
+def click5(clickData):
+    counter = 5
+    if clickData == None:
+        raise PreventUpdate
+    else:
+        return counter
+
+@app.callback(Output("click-data6", "children"),
+            [Input("Graph6", "clickData")])
+def click6(clickData):
+    counter = 6
+    if clickData == None:
+        raise PreventUpdate
+    else:
+        return counter
+
+@app.callback(Output("click-data7", "children"),
+            [Input("Graph7", "clickData")])
+def click7(clickData):
+    counter = 7
+    if clickData == None:
+        raise PreventUpdate
+    else:
+        return counter
+
+@app.callback(Output("user_results", "children"), [Input("show-secret", "n_clicks")])
+def secret_key(n_clicks):
+    if n_clicks == None:
+        raise PreventUpdate
+    else:
+        return "Scroll down to retrieve your token. Input the token into your Dashboard Account."
+
+@app.callback(Output("user_answer", "children"), [Input("show-forbidden", "n_clicks")])
+def secret_key(n_clicks):
+    if n_clicks == None:
+        raise PreventUpdate
+    else:
+        return "Jeans USA"
+'''
+def generate_number(click_counter):
+    if click_counter == []:
+        return 789
+    click_counter = list(set(click_counter))
+    number = 0
+    for i in range(len(click_counter)):
+        value = click_counter[i]
+        number = number * 10
+        number += value
+    return number
+'''
+
+if __name__ == "__main__":
+    app.run_server(debug=True)
 
 '''
 @app.callback(Output("Graph7", "figure"), [Input("Update_Graph7", "n_intervals")])
@@ -497,79 +609,3 @@ def update_graph8(input_data):
 
     return {"data": [data]}
 '''
-
-@app.callback(Output("click-data1", "children"),
-            [Input("Graph1", "clickData")])
-def click1(clickData):
-    counter = 1
-    if clickData == None:
-        raise PreventUpdate
-    else:
-        return counter
-
-@app.callback(Output("click-data2", "children"),
-            [Input("Graph2", "clickData")])
-def click2(clickData):
-    counter = 2
-    if clickData == None:
-        raise PreventUpdate
-    else:
-        return counter
-
-@app.callback(Output("click-data3", "children"),
-            [Input("Graph3", "clickData")])
-def click3(clickData):
-    counter = 3
-    if clickData == None:
-        raise PreventUpdate
-    else:
-        return counter
-
-@app.callback(Output("click-data4", "children"),
-            [Input("Graph4", "clickData")])
-def click4(clickData):
-    counter = 4
-    if clickData == None:
-        raise PreventUpdate
-    else:
-        return counter
-
-@app.callback(Output("click-data5", "children"),
-            [Input("Graph5", "clickData")])
-def click5(clickData):
-    counter = 5
-    if clickData == None:
-        raise PreventUpdate
-    else:
-        return counter
-
-@app.callback(Output("click-data6", "children"),
-            [Input("Graph6", "clickData")])
-def click6(clickData):
-    counter = 6
-    if clickData == None:
-        raise PreventUpdate
-    else:
-        return counter
-
-@app.callback(Output("user_results", "children"), [Input("show-secret", "n_clicks")])
-def secret_key(n_clicks):
-    if n_clicks == None:
-        raise PreventUpdate
-    else:
-        return "Scroll down to retrieve your token. Input the token into your Dashboard Account."
-'''
-def generate_number(click_counter):
-    if click_counter == []:
-        return 789
-    click_counter = list(set(click_counter))
-    number = 0
-    for i in range(len(click_counter)):
-        value = click_counter[i]
-        number = number * 10
-        number += value
-    return number
-'''
-
-if __name__ == "__main__":
-    app.run_server(debug=True)
