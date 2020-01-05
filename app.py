@@ -87,14 +87,14 @@ app.layout = html.Div([
             dcc.Interval(id="Update_Graph7", interval=50000)
         ], className= "six columns"),
     ]),
-    #html.Div(className="row", children=[
-    #    html.Div([
-    #        html.Img(src=app.get_asset_url("WordCloud4.png"), style={'height':'90%', 'width':'110%'})
-    #    ], className="six columns"),
-    #    html.Div([
-    #        html.Img(src=app.get_asset_url("WordCloud5.png"), style={'height':'90%', 'width':'80%'})
-    #    ], className="six columns")   
-    #]),
+    html.Div(className="row", children=[
+        html.Div([
+            html.Img(src=app.get_asset_url("WordCloud4.png"), style={'height':'90%', 'width':'100%'})
+        ], className="six columns"),
+        html.Div([
+            html.Img(src=app.get_asset_url("WordCloud5.png"), style={'height':'100%', 'width':'80%'})
+        ], className="six columns")   
+    ]),
     html.Div(className="row", children=[
         html.Button("Click here to conclude your analysis & generate your survey token.", id="show-secret"),
         html.Div(id="user_results")
@@ -121,6 +121,9 @@ app.layout = html.Div([
         ],className= "one columns"),
         html.Div([
             html.Pre(id="click-data7")
+        ],className= "one columns"),
+        html.Div([
+            html.Pre(id="cheat-data")
         ],className= "one columns")
     ])
 ])
@@ -464,6 +467,15 @@ def click7(clickData):
     else:
         return counter
 
+@app.callback(Output("cheat-data", "children"),
+            [Input("show-forbidden", "n_clicks")])
+def cheat_click(clickData):
+    counter = 8
+    if clickData == None:
+        raise PreventUpdate
+    else:
+        return counter
+
 @app.callback(Output("user_results", "children"), [Input("show-secret", "n_clicks")])
 def secret_key(n_clicks):
     if n_clicks == None:
@@ -477,18 +489,7 @@ def secret_key(n_clicks):
         raise PreventUpdate
     else:
         return "Jeans USA"
-'''
-def generate_number(click_counter):
-    if click_counter == []:
-        return 789
-    click_counter = list(set(click_counter))
-    number = 0
-    for i in range(len(click_counter)):
-        value = click_counter[i]
-        number = number * 10
-        number += value
-    return number
-'''
+
 
 if __name__ == "__main__":
     app.run_server(debug=True)
